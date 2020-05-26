@@ -80,6 +80,10 @@ function compression(options) {
   const filter  = opts.filter || shouldCompress;
   let threshold = bytes.parse(opts.threshold);
 
+  const brotliEnabled = (opts.brotli && opts.brotli.enabled) !== false;
+  const gzipEnabled = (opts.gzip && opts.gzip.enabled) !== false;
+  const deflateEnabled = (opts.deflate && optoptsions.deflate.enabled) !== false;
+
   if (threshold === null) {
     threshold = 1024;
   }
@@ -225,9 +229,9 @@ function compression(options) {
       // case.
       // lastly, if brotli is unavailable or unsupported on this platform,
       // the object will be falsy.
-      const method = (brotli && contentType !== 'text/event-stream' && accept.encoding('br')) ||
-                     accept.encoding('gzip') ||
-                     accept.encoding('deflate') ||
+      const method = (brotli && contentType !== 'text/event-stream' && brotliEnabled && accept.encoding('br')) ||
+                     (gzipEnabled && accept.encoding('gzip')) ||
+                     (deflateEnabled && accept.encoding('deflate')) ||
                      accept.encoding('identity');
 
       // negotiation failed
